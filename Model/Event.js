@@ -2,18 +2,20 @@ const mongoose = require('mongoose');
 
 const eventSchema = new mongoose.Schema(
   {
+    summary: String,
+    description: String,
     start: {
-      type: String,
-      required: 'Please provide a starting time',
+      dateTime: String,
+      timeZone: String,
     },
     end: {
-      type: String,
-      required: 'Please provide an ending time',
+      dateTime: String,
+      timeZone: String,
     },
     attendees: [{ email: String }],
-    duration: {
-      type: Number,
-      required: 'Please provide a duration for the event',
+    userId: {
+      type: mongoose.Schema.ObjectId,
+      ref: 'User',
     },
   },
   {

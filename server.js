@@ -22,6 +22,22 @@ passport.use(
     (request, accessToken, refreshToken, profile, done) => {
       User.findOne({ googleId: profile.id }, (err, user) => {
         if (err) done(err);
+        if (
+          user &&
+          new Date().getTime() > new Date(user.refreshTokenExpires).getTime()
+        ) {
+          console.log('here update');
+          user.updateOne(
+            {
+              accessToken,
+              refreshTokenExpires: Date.now() + 3600 * 1000,
+              refreshToken,
+            },
+            (updateErr, updateUser) => {
+              return done(updateErr, updateUser);
+            }
+          );
+        }
         if (!user) {
           console.log('new user');
           user = new User({

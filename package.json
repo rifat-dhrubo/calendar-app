@@ -11,11 +11,13 @@
 		"dev": "concurrently \"npm run server\" \"npm run client\""
 	},
 	"dependencies": {
+		"axios": "^0.19.2",
 		"body-parser": "^1.19.0",
 		"dotenv": "^8.2.0",
 		"express": "^4.17.1",
-		"googleapi": "^1.0.2",
+		"googleapis": "^52.1.0",
 		"mongoose": "^5.9.18",
+		"node-fetch": "^2.6.0",
 		"passport": "^0.4.1",
 		"passport-google-oauth20": "^2.0.0"
 	},
