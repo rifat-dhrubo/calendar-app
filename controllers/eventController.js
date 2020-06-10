@@ -22,7 +22,9 @@ const getEvents = async (req, res) => {
 const confirmEvents = async (req, res) => {
   const { id, email } = req.body;
 
-  const [err, event] = await asyncHandler(Event.findById(id).lean().exec());
+  const [err, event] = await asyncHandler(
+    Event.findByIdAndUpdate(id, { booked: true }, { new: true }).lean().exec()
+  );
 
   const { summary, description, start, end, userId } = event;
 

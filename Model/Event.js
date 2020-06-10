@@ -17,6 +17,10 @@ const eventSchema = new mongoose.Schema(
       type: mongoose.Schema.ObjectId,
       ref: 'User',
     },
+    booked: {
+      type: Boolean,
+      default: false,
+    },
   },
   {
     timestamps: true,
