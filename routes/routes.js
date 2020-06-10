@@ -19,8 +19,7 @@ router.get(
   '/auth/google/callback',
   passport.authenticate('google'),
   (req, res) => {
-    const { email, name, googleId } = req.user;
-    res.json({ email, name, googleId });
+    res.redirect('http://127.0.0.1:3000/book');
   }
 );
 

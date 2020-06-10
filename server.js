@@ -49,6 +49,7 @@ passport.use(
           });
           user.save((errCreate) => {
             if (errCreate) console.log(errCreate);
+            console.log('done');
             return done(errCreate, user);
           });
         }
