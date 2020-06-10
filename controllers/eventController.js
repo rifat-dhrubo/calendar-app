@@ -1,3 +1,4 @@
+const fetch = require('node-fetch');
 const User = require('../Model/User');
 const Event = require('../Model/Event');
 const { asyncHandler } = require('../utils/errorHandler');
@@ -11,19 +12,6 @@ const createEvents = async (req, res) => {
 
   const [err, event] = await asyncHandler(Event.create(...events));
 
-  // const payload = JSON.stringify(event);
-
-  // const [err, data] = await asyncHandler(
-  //   fetch('https://www.googleapis.com/calendar/v3/calendars/primary/events', {
-  //     method: 'POST',
-  //     headers: {
-  //       'Content-Type': 'application/json',
-  //       Authorization: `Bearer ${user.refreshToken.access_token}`,
-  //     },
-  //     body: payload,
-  //   }).then((response) => response.json())
-  // );
-
   res.json({ err, event });
 };
 const getEvents = async (req, res) => {
@@ -32,9 +20,41 @@ const getEvents = async (req, res) => {
   res.json({ err, event });
 };
 const confirmEvents = async (req, res) => {
-  const [err, event] = await asyncHandler(Event.find().lean().exec());
+  const { id, email } = req.body;
 
-  res.json({ err, event });
+  const [err, event] = await asyncHandler(Event.findById(id).lean().exec());
+
+  const { summary, description, start, end, userId } = event;
+
+  const [errUser, user] = await asyncHandler(
+    User.findById(userId).lean().exec()
+  );
+
+  const token = `Bearer ${user.refreshToken.access_token}`;
+
+  const payload = JSON.stringify({
+    summary,
+    description,
+    start,
+    end,
+    attendees: [{ email }],
+    status: 'confirmed',
+  });
+
+  console.log(JSON.parse(payload));
+
+  const [errData, data] = await asyncHandler(
+    fetch('https://www.googleapis.com/calendar/v3/calendars/primary/events', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: token,
+      },
+      body: payload,
+    }).then((response) => response.json())
+  );
+
+  res.json({ errData, data });
 };
 
 module.exports = { createEvents, getEvents, confirmEvents };

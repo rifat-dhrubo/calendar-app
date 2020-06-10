@@ -1,9 +1,11 @@
 const express = require('express');
 const passport = require('passport');
-const axios = require('axios');
-const fetch = require('node-fetch');
 const { authenticate } = require('../controllers/authController');
-const { createEvents, getEvents } = require('../controllers/eventController');
+const {
+  createEvents,
+  getEvents,
+  confirmEvents,
+} = require('../controllers/eventController');
 
 const router = express.Router();
 
