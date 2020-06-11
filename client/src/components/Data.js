@@ -6,7 +6,7 @@ import { turquoise, lightBlack, grey, red, error } from '../utils/colors';
 import { Log } from '../utils/FormCompoment';
 
 const Data = ({ data }) => {
-  const { summary, description, start, end, _id } = data;
+  const { summary, description, start, end, _id, userId } = data;
 
   const { register, handleSubmit, errors } = useForm({});
 
@@ -44,6 +44,7 @@ const Data = ({ data }) => {
         <h2>Name: {summary}</h2>
       </div>
       <div className="info">
+        <p>Organizer: {userId.name}</p>
         <p>Description: {description}</p>
         <p>Start: {start.dateTime}</p>
         <p>End: {end.dateTime}</p>

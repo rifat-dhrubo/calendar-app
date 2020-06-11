@@ -23,7 +23,7 @@ const createEvents = async (req, res) => {
 
 const getEvents = async (req, res) => {
   const [err, event] = await asyncHandler(
-    Event.find({ booked: 'unconfirmed' }).lean().exec()
+    Event.find({ booked: 'unconfirmed' }).populate('userId').lean().exec()
   );
 
   res.json({ err, event });

@@ -32,10 +32,10 @@ const Book = () => {
     name: 'events',
   });
 
-  const onSubmit = (data) => setFormData(data);
+  const onSubmit = (data) => {
+    const payload = JSON.stringify({ ...data });
 
-  useEffect(() => {
-    const payload = JSON.stringify(formData);
+    console.log(payload);
 
     async function saveEvents() {
       await fetch('/event', {
@@ -59,7 +59,7 @@ const Book = () => {
     }
 
     saveEvents();
-  }, [formData]);
+  };
 
   return (
     <Wrapper>
