@@ -18,8 +18,8 @@ const eventSchema = new mongoose.Schema(
       ref: 'User',
     },
     booked: {
-      type: Boolean,
-      default: false,
+      type: String,
+      default: 'unconfirmed',
     },
   },
   {

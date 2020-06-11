@@ -6,23 +6,67 @@ import { Log } from '../utils/FormCompoment';
 
 // import { AuthContext } from './AuthContext';
 
-const Login = () => {
-  const { register, handleSubmit, control, reset, errors } = useForm({});
+const Book = () => {
+  const { register, handleSubmit, control, reset, errors } = useForm({
+    defaultValues: {
+      events: [
+        {
+          summary: '',
+          description: '',
+          start: {
+            dateTime: '',
+            timeZone: 'Asia/Dhaka',
+          },
+          end: {
+            dateTime: '',
+            timeZone: 'Asia/Dhaka',
+          },
+        },
+      ],
+    },
+  });
   const [formData, setFormData] = useState({});
 
   const { fields, append, remove } = useFieldArray({
     control,
-    name: 'dates',
+    name: 'events',
   });
 
-  const onSubmit = async (data) => setFormData(data);
+  const onSubmit = (data) => setFormData(data);
+
+  useEffect(() => {
+    const payload = JSON.stringify(formData);
+
+    async function saveEvents() {
+      await fetch('/event', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: payload,
+      })
+        .then((response) => {
+          if (response.status >= 400) console.error('error');
+
+          return response.json();
+        })
+        .then((response) => {
+          if (response.err == null) {
+            setFormData({});
+            console.log(response);
+          }
+        });
+    }
+
+    saveEvents();
+  }, [formData]);
 
   return (
     <Wrapper>
       <Log>
         <form className="form-control" onSubmit={handleSubmit(onSubmit)}>
           <h1>Set up your appointments</h1>
-          <label htmlFor="mail">
+          <label htmlFor="email">
             Your Email
             <input
               type="text"
@@ -33,38 +77,104 @@ const Login = () => {
               })}
             />
           </label>
-
           {errors.email && <p className="error">You must specify an email</p>}
 
           {fields.map((item, index) => {
             return (
               <div key={item.id}>
-                <label htmlFor={`dates[${index}]`}>
-                  Appointment Date
-                  <div className="input">
-                    <input
-                      type="datetime-local"
-                      name={`dates[${index}]`}
-                      ref={register()}
-                    />
-                    <button type="button" onClick={() => remove(index)}>
-                      Delete
-                    </button>
-                  </div>
+                <label htmlFor={`events[${index}].summary`}>
+                  Summary
+                  <input
+                    type="text"
+                    name={`events[${index}].summary`}
+                    ref={register()}
+                  />
                 </label>
+
+                <label htmlFor={`events[${index}].description`}>
+                  Description
+                  <input
+                    type="text"
+                    name={`events[${index}].description`}
+                    ref={register()}
+                  />
+                </label>
+
+                <label htmlFor={`events[${index}].start.dateTime`}>
+                  Appointment Start
+                  <input
+                    type="datetime-local"
+                    name={`events[${index}].start.dateTime`}
+                    ref={register()}
+                  />
+                </label>
+                <input
+                  type="hidden"
+                  name={`events[${index}].start.timeZone`}
+                  value="Asia/Dhaka"
+                  ref={register()}
+                />
+                <label htmlFor={`events[${index}].end.dateTime`}>
+                  Appointment Finish
+                  <input
+                    type="datetime-local"
+                    name={`events[${index}].end.dateTime`}
+                    ref={register()}
+                  />
+                </label>
+                <input
+                  type="hidden"
+                  name={`events[${index}].end.timeZone`}
+                  value="Asia/Dhaka"
+                  ref={register()}
+                />
+                <button type="button" onClick={() => remove(index)}>
+                  Delete
+                </button>
               </div>
             );
           })}
           <button
             type="button"
             onClick={() => {
-              append({});
+              append({
+                summary: '',
+                description: '',
+                start: {
+                  dateTime: '',
+                  timeZone: 'Asia/Dhaka',
+                },
+                end: {
+                  dateTime: '',
+                  timeZone: 'Asia/Dhaka',
+                },
+              });
             }}
           >
             Add
           </button>
 
-          <button type="button" onClick={() => reset({})}>
+          <button
+            type="button"
+            onClick={() =>
+              reset({
+                events: [
+                  {
+                    summary: '',
+                    description: '',
+                    start: {
+                      dateTime: '',
+                      timeZone: 'Asia/Dhaka',
+                    },
+                    end: {
+                      dateTime: '',
+                      timeZone: 'Asia/Dhaka',
+                    },
+                  },
+                ],
+              })
+            }
+          >
             Reset
           </button>
 
@@ -117,4 +227,4 @@ const Wrapper = styled.div`
   }
 `;
 
-export default Login;
+export default Book;

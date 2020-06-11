@@ -4,26 +4,38 @@ const Event = require('../Model/Event');
 const { asyncHandler } = require('../utils/errorHandler');
 
 const createEvents = async (req, res) => {
-  const { googleId, events } = req.body;
+  const { email, events } = req.body;
 
   const [errUser, user] = await asyncHandler(
-    User.findOne({ googleId }).lean().exec()
+    User.findOne({ email }).lean().exec()
   );
 
-  const [err, event] = await asyncHandler(Event.create(...events));
+  const newEvents = events.map((event) => {
+    const temp = { ...event };
+    temp.userId = user._id;
+    return temp;
+  });
+
+  const [err, event] = await asyncHandler(Event.create(...newEvents));
 
   res.json({ err, event });
 };
+
 const getEvents = async (req, res) => {
-  const [err, event] = await asyncHandler(Event.find().lean().exec());
+  const [err, event] = await asyncHandler(
+    Event.find({ booked: 'unconfirmed' }).lean().exec()
+  );
 
   res.json({ err, event });
 };
+
 const confirmEvents = async (req, res) => {
   const { id, email } = req.body;
 
   const [err, event] = await asyncHandler(
-    Event.findByIdAndUpdate(id, { booked: true }, { new: true }).lean().exec()
+    Event.findByIdAndUpdate(id, { booked: 'confirmed' }, { new: true })
+      .lean()
+      .exec()
   );
 
   const { summary, description, start, end, userId } = event;
